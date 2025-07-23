@@ -2,7 +2,7 @@
 
 # Variables de configuration
 VERSION_STRING="5:20.10.0~3-0~ubuntu-focal"
-ENABLE_ZSH=true
+# ENABLE_ZSH=true
 
 # Configuration pour éviter les prompts interactifs
 export DEBIAN_FRONTEND=noninteractive
@@ -113,16 +113,16 @@ sudo docker --version || echo "Erreur lors de la vérification de Docker"
 sudo docker info > /dev/null 2>&1 || echo "Docker daemon non accessible"
 
 # Configuration optionnelle de ZSH si activée
-if [ "$ENABLE_ZSH" = true ]; then
-    echo "Installation et configuration de ZSH..."
-    sudo apt-get install -y zsh
+# if [ "$ENABLE_ZSH" = true ]; then
+#     echo "Installation et configuration de ZSH..."
+#     sudo apt-get install -y zsh
     
-    # Installation de Oh My Zsh pour l'utilisateur ubuntu
-    sudo -u ubuntu sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || echo "Oh My Zsh installation failed"
+#     # Installation de Oh My Zsh pour l'utilisateur ubuntu
+#     sudo -u ubuntu sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || echo "Oh My Zsh installation failed"
     
-    # Changement du shell par défaut pour ubuntu
-    sudo chsh -s /bin/zsh ubuntu || echo "Failed to change shell to zsh"
-fi
+#     # Changement du shell par défaut pour ubuntu
+#     sudo chsh -s /bin/zsh ubuntu || echo "Failed to change shell to zsh"
+# fi
 
 # Nettoyage final
 echo "Nettoyage final..."
