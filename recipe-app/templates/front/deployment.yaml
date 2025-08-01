@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mon-chart.fullname" . }}-frontend
+  labels:
+    app: {{ include "mon-chart.name" . }}
+    tier: frontend
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mon-chart.name" . }}
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ include "mon-chart.name" . }}
+        tier: frontend
+    spec:
+      containers:
+        - name: {{ .Values.frontend.containerName }}
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          env:
+            - name: API_URL
+              value: {{ .Values.frontend.env.apiUrl | quote }}
+          ports:
+            - containerPort: {{ .Values.frontend.containerPort }}
+              name: app-port

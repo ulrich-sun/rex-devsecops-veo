@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mon-chart.fullname" . }}-mysql
+  labels:
+    app: {{ include "mon-chart.name" . }}
+    tier: bdd
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.mysql.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mon-chart.name" . }}
+      tier: bdd
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ include "mon-chart.name" . }}
+        tier: bdd
+    spec:
+      containers:
+        - name: {{ .Values.mysql.containerName }}
+          image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
+          imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mysql.secret.name }}
+                  key: {{ .Values.mysql.secret.key }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mysql.database.name | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.mysql.database.user | quote }}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mysql.secret.name }}
+                  key: {{ .Values.mysql.secret.key }}
+          ports:
+            - containerPort: {{ .Values.mysql.port }}
+              name: mysql-port
+          volumeMounts:
+            - name: mysql-volume
+              mountPath: {{ .Values.mysql.persistence.mountPath }}
+      volumes:
+        - name: mysql-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.mysql.persistence.claimName }}

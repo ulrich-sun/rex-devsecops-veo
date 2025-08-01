@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storage
+provisioner: example.com/nfs
+parameters:
+  archiveOnDelete: "false"
+  pathPattern: "${.PVC.namespace}-${.PVC.name}"
+mountOptions:
+  - vers=4.1
+reclaimPolicy: Retain
+volumeBindingMode: Immediate

@@ -1,0 +1,120 @@
+#ingress controller
+ingress-nginx:
+  controller:
+    replicaCount: 2
+    service:
+      type: NodePort
+      nodePorts:
+        http: 30080
+        https: 30443
+    admissionWebhooks:
+      enabled: false
+ingress-nginx:
+  enabled: true
+
+
+#nfs server provisioner
+nfs-server-provisioner:
+  enabled: true
+
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: ""
+
+  nfs:
+    mountOptions:
+      - vers=4.1
+    path: /export
+    server: nfs-server-provisioner.recipe-app.svc.cluster.local  # FQDN utilisé par la StorageClass
+
+
+#recipe-app
+replicaCount: 1
+
+app:
+  containerName: recipe-api
+  image:
+    repository: olivierkkoc/recipe-api
+    tag: demo
+    pullPolicy: IfNotPresent
+  containerPort: 5173
+
+env:
+  frontendUrl: http://<your_ip>:3000
+  datasource:
+    url: jdbc:mysql://recipe-mysql:3306/recipe_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: recipe_user
+    secretName: recipe-pass
+    secretKey: password
+  jpa:
+    ddl: update
+    showSql: "true"
+
+persistence:
+  mountPath: /var/lib/mysql
+  claimName: mysql-pv-claim
+  storageClass: nfs-storage
+  size: 5Gi
+
+# frontend
+frontend:
+  replicaCount: 1
+  containerName: recipe-app
+  image:
+    repository: olivierkkoc/recipe-app
+    tag: demo
+    pullPolicy: IfNotPresent
+  env:
+    apiUrl: localhost
+  containerPort: 80
+
+
+#mysql
+mysql:
+  replicaCount: 1
+  containerName: recipe-mysql
+  image:
+    repository: mysql
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+
+  port: 3306
+
+  secret:
+    name: mysql-pass
+    key: password
+
+  database:
+    name: recipe_db
+    user: recipe_user
+
+  persistence:
+    mountPath: /var/lib/mysql
+    claimName: mysql-pvc
+    storageClass: nfs-storage
+    size: 5Gi
+
+persistence:
+  claimName: mysql-pvc
+  accessMode: ReadWriteOnce
+  storageClassName: nfs-dynamic
+  size: 5Gi
+  mountPath: /var/lib/mysql
+
+
+namespace:
+  name: recipe-ns
+  create: true
+
+service:
+  type: ClusterIP
+  port: 3306
+  name: recipe-mysql
+
+api:
+  port: 5173
+  service:
+    type: ClusterIP
+    port: 5173
+  name: recipe-api

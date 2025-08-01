@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mon-chart.fullname" . }}-mysql
+  labels:
+    app: {{ include "mon-chart.name" . }}
+    release: {{ .Release.Name }}
+spec:
+  type: {{ .Values.mysql.service.type }}
+  selector:
+    app: {{ include "mon-chart.name" . }}
+    tier: bdd
+  ports:
+    - name: mysql
+      port: {{ .Values.mysql.service.port }}
+      targetPort: {{ .Values.mysql.port }}

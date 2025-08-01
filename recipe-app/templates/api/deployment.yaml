@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mon-chart.fullname" . }}
+  labels:
+    app: {{ include "mon-chart.name" . }}
+    chart: {{ include "mon-chart.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mon-chart.name" . }}
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ include "mon-chart.name" . }}
+        tier: backend
+    spec:
+      containers:
+        - name: {{ .Values.app.containerName }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: {{ .Values.env.datasource.url | quote }}
+            - name: FRONTEND_URL
+              value: {{ .Values.env.frontendUrl | quote }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ .Values.env.datasource.username | quote }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.datasource.secretName }}
+                  key: {{ .Values.env.datasource.secretKey }}
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: {{ .Values.env.jpa.ddl | quote }}
+            - name: SPRING_JPA_SHOW_SQL
+              value: {{ .Values.env.jpa.showSql | quote }}
+          ports:
+            - name: api-port
+              containerPort: {{ .Values.app.containerPort }}
+          volumeMounts:
+            - name: recipe-volume
+              mountPath: {{ .Values.persistence.mountPath }}
+      volumes:
+        - name: recipe-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.claimName }}
+            

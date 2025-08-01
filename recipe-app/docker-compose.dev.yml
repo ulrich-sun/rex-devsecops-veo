@@ -1,8 +1,0 @@
-services:
-  front:
-    image: app
-    container_name:  front_recipe
-    ports:
-      - "8080:80"
-    environment:
-      - API_URL=https://your_ip:your_port/api
