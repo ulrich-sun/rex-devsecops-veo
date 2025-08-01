@@ -35,8 +35,8 @@ apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # Configure Kubernetes repository
 mkdir -p /etc/apt/keyrings/
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | \
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /" | \
   tee /etc/apt/sources.list.d/kubernetes.list
 
 # System configuration
@@ -48,9 +48,9 @@ systemctl disable --now ufw
 # Install Kubernetes components
 apt-get update
 apt-get install -y \
-    kubeadm=1.28.1-1.1 \
-    kubelet=1.28.1-1.1 \
-    kubectl=1.28.1-1.1
+    kubeadm=1.31.1-1.1 \
+    kubelet=1.31.1-1.1 \
+    kubectl=1.31.1-1.1
 apt-mark hold kubeadm kubelet kubectl
 
 # Configure containerd

@@ -25,8 +25,8 @@ apt install docker-ce -y
 
 # Adding Kubernetes repositories
 mkdir -p /etc/apt/keyrings/
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 # Turn off swap
 swapoff -a
@@ -36,7 +36,7 @@ ufw disable
 
 # Installing Kubernetes tools
 apt update
-apt install -y kubeadm=1.28.1-1.1 kubelet=1.28.1-1.1 kubectl=1.28.1-1.1
+apt install -y kubeadm=1.31.1-1.1 kubelet=1.31.1-1.1 kubectl=1.31.1-1.1
 
 # Get IP addresses
 export ipaddr=$(ip address|grep eth0|grep inet|awk -F ' ' '{print $2}' |awk -F '/' '{print $1}')
@@ -54,7 +54,7 @@ net.ipv4.ip_forward = 1
 EOF
 
 sysctl --system
-kubeadm config images pull --kubernetes-version v1.28.1
+kubeadm config images pull --kubernetes-version v1.31.1
 
 # Kubernetes cluster init
 # kubeadm init --apiserver-advertise-address=$ipaddr --pod-network-cidr=192.168.0.0/16 --apiserver-cert-extra-sans=$pubip > /tmp/result.out
