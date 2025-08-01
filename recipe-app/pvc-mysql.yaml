@@ -2,10 +2,12 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.mysql.persistence.claimName }}
+  labels:
+    {{- include "mon-chart.labels" . | nindent 4 }}
 spec:
   accessModes:
-    - {{ .Values.mysql.persistence.accessMode }}
-  storageClassName: {{ .Values.mysql.persistence.storageClassName }}
+    - {{ .Values.mysql.persistence.accessMode | default "ReadWriteOnce" }}
+  storageClassName: {{ .Values.mysql.persistence.storageClass }}
   resources:
     requests:
       storage: {{ .Values.mysql.persistence.size }}

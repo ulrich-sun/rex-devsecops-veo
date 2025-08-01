@@ -3,10 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "mon-chart.fullname" . }}
   labels:
-    app: {{ include "mon-chart.name" . }}
-    chart: {{ include "mon-chart.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "mon-chart.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -14,7 +11,7 @@ spec:
       app: {{ include "mon-chart.name" . }}
       tier: backend
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -51,4 +48,3 @@ spec:
         - name: recipe-volume
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.claimName }}
-            

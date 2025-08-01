@@ -3,9 +3,8 @@ kind: Deployment
 metadata:
   name: {{ include "mon-chart.fullname" . }}-frontend
   labels:
-    app: {{ include "mon-chart.name" . }}
+    {{- include "mon-chart.labels" . | nindent 4 }}
     tier: frontend
-    release: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
   selector:
@@ -13,7 +12,7 @@ spec:
       app: {{ include "mon-chart.name" . }}
       tier: frontend
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -28,5 +27,5 @@ spec:
             - name: API_URL
               value: {{ .Values.frontend.env.apiUrl | quote }}
           ports:
-            - containerPort: {{ .Values.frontend.containerPort }}
-              name: app-port
+            - name: app-port
+              containerPort: {{ .Values.frontend.containerPort }}

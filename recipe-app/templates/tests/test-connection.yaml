@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "recipe-app.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "recipe-app.fullname" . }}-api:{{ .Values.api.service.port }}']
   restartPolicy: Never

@@ -3,9 +3,8 @@ kind: Deployment
 metadata:
   name: {{ include "mon-chart.fullname" . }}-mysql
   labels:
-    app: {{ include "mon-chart.name" . }}
+    {{- include "mon-chart.labels" . | nindent 4 }}
     tier: bdd
-    release: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.mysql.replicaCount }}
   selector:
@@ -13,7 +12,7 @@ spec:
       app: {{ include "mon-chart.name" . }}
       tier: bdd
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -40,8 +39,8 @@ spec:
                   name: {{ .Values.mysql.secret.name }}
                   key: {{ .Values.mysql.secret.key }}
           ports:
-            - containerPort: {{ .Values.mysql.port }}
-              name: mysql-port
+            - name: mysql-port
+              containerPort: {{ .Values.mysql.port }}
           volumeMounts:
             - name: mysql-volume
               mountPath: {{ .Values.mysql.persistence.mountPath }}

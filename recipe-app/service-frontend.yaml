@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: {{ include "mon-chart.fullname" . }}-frontend
   labels:
-    app: {{ include "mon-chart.name" . }}
-    release: {{ .Release.Name }}
+    {{- include "mon-chart.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.frontend.service.type }}
   selector:
