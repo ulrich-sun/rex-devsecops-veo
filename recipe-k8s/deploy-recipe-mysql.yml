@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipe-mysql
+  labels:
+    app: recipe
+spec:
+  selector:
+    matchLabels:
+      app: recipe
+      tier: bdd
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: recipe
+        tier: bdd
+    spec:
+      containers:
+      - image: mysql:8.0
+        name: recipe-mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        - name: MYSQL_DATABASE
+          value: recipe_db
+        - name: MYSQL_USER
+          value: recipe_user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mysql-port
+        volumeMounts:
+        - name: mysql-volume
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-volume
+        persistentVolumeClaim:
+          claimName: mysql-pvc

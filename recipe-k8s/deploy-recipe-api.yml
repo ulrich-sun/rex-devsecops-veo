@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipe
+  labels:
+    app: recipe
+spec:
+  selector:
+    matchLabels:
+      app: recipe
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: recipe
+        tier: backend
+    spec:
+      containers:
+      - image: olivierkkoc/recipe-api:demo
+        name: recipe-api
+        env:        
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://recipe-mysql:3306/recipe_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+        - name: FRONTEND_URL
+          value: http://<your_ip>:3000
+        - name: SPRING_DATASOURCE_USERNAME
+          value: recipe_user
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: recipe-pass
+              key: password
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: update
+        - name: SPRING_JPA_SHOW_SQL
+          value: "true"          
+        ports:
+        - containerPort: 5173
+          name: api-port
+        volumeMounts:
+        - name: recipe-volume
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: recipe-volume
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim

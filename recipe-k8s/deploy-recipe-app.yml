@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipe
+  labels:
+    app: recipe
+spec:
+  selector:
+    matchLabels:
+      app: recipe
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: recipe
+        tier: frontend
+    spec:
+      containers:
+      - image: olivierkkoc/recipe-app:demo
+        name: recipe-app
+        env:
+        - name: API_URL
+          value: localhost
+        ports:
+        - containerPort: 80
+          name: app-port
