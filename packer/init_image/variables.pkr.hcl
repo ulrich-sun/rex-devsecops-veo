@@ -1,5 +1,5 @@
 # Fichier: builds/ubuntu/variables.pkr.hcl
-
+#############
 # Configuration AWS
 variable "aws_region" {
   type        = string
