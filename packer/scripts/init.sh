@@ -16,6 +16,6 @@ sudo apt-get update 2>/dev/null || true
 sudo apt-get install -y --no-install-recommends apt-utils 2>/dev/null || true
 
 # Continuer avec vos installations normales
-sudo apt-get install -y curl git wget unzip
+sudo apt-get install -y curl git wget unzip socat 
 # init.sh - Script d'initialisation pour l'image Ubuntu 20.04 LTS
 

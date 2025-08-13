@@ -1,6 +1,6 @@
 # Fichier: builds/ubuntu/variables.pkr.hcl
 
-# Configuration AWS
+## Configuration AWS
 variable "aws_region" {
   type        = string
   description = "Région AWS où déployer l'infrastructure"
