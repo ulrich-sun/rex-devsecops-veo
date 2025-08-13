@@ -17,7 +17,7 @@ data "amazon-ami" "ubuntu_focal" {
     owners = ["099720109477"]
     most_recent = true
 }
-
+#
 # Locals pour les valeurs calculées
 locals {
   timestamp = formatdate("YYYYMMDD-hhmmss", timestamp())
